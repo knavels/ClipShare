@@ -24,7 +24,7 @@ impl Default for ExpiresAt {
 impl FromStr for ExpiresAt {
     type Err = ClipError;
     fn from_str(raw: &str) -> Result<Self, Self::Err> {
-        if (raw.is_empty()) {
+        if raw.is_empty() {
             Ok(Self(None))
         } else {
             match Time::from_str(raw) {
