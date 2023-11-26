@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS clip_share
     created_at      DATETIME NOT NULL,
     expires_at      DATETIME,
     password        TEXT,
-    hits            BIGINT NOT NULL,
+    views           BIGINT NOT NULL,
 );
