@@ -25,3 +25,4 @@ sqlx = { version = "0.7.3", features = [
     "uuid",
 ] }
 handlebars = { version = "4.5.0", features = ["dir_source"] }
+rocket = { version = "0.5.0", features = ["json"] }
