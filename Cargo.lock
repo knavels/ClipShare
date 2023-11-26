@@ -3,19 +3,6 @@
 version = 3
 
 [[package]]
-name = "ClipShare"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "derive_more",
- "rand",
- "serde",
- "serde_json",
- "thiserror",
- "uuid",
-]
-
-[[package]]
 name = "android-tzdata"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -70,6 +57,19 @@ dependencies = [
  "serde",
  "wasm-bindgen",
  "windows-targets",
+]
+
+[[package]]
+name = "clipshare"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "derive_more",
+ "rand",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "uuid",
 ]
 
 [[package]]
