@@ -4,6 +4,23 @@ use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct NewClip {
+    pub content: field::Content,
+    pub title: field::Title,
+    pub exprires_at: field::ExpiresAt,
+    pub password: field::Password,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UpdateClip {
+    pub content: field::Content,
+    pub title: field::Title,
+    pub exprires_at: field::ExpiresAt,
+    pub password: field::Password,
+    pub short_code: field::ShortCode,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct GetClip {
     pub short_code: ShortCode,
     pub password: field::Password,
