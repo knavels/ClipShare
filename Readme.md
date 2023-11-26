@@ -4,4 +4,4 @@ Based on tutorial by <https://zerotomastery.io/>
 
 ## Development tools
 
-- `sqlx-cli` to manage sqlite database install it using `cargo install sqlx-cli`
+- `sqlx-cli` to manage sqlite database install it using `cargo install sqlx-cli && sqlx[.exe] database setup`
