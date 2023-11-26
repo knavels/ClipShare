@@ -9,6 +9,7 @@ use rocket::response::content::RawHtml;
 use rocket::response::{status, Redirect};
 use rocket::{uri, State};
 
+use super::views::Views;
 use super::PASSWORD_COOKIE;
 
 #[rocket::get("/")]
@@ -78,6 +79,7 @@ pub async fn new_clip(
 pub async fn get_clip(
     short_code: ShortCode,
     database: &State<AppDatabase>,
+    views: &State<Views>,
     renderer: &State<Renderer<'_>>,
 ) -> Result<status::Custom<RawHtml<String>>, PageError> {
     fn render_with_status<T: ctx::PageContext + serde::Serialize + std::fmt::Debug>(
@@ -93,6 +95,7 @@ pub async fn get_clip(
 
     match action::get_clip(short_code.clone().into(), database.get_pool()).await {
         Ok(clip) => {
+            views.view(short_code.clone(), 1);
             let context = ctx::ViewClip::new(clip);
             render_with_status(Status::Ok, context, renderer)
         }
@@ -112,6 +115,7 @@ pub async fn submit_clip_password(
     cookies: &CookieJar<'_>,
     form: Form<Contextual<'_, form::GetPasswordProtectedClip>>,
     short_code: ShortCode,
+    views: &State<Views>,
     database: &State<AppDatabase>,
     renderer: &State<Renderer<'_>>,
 ) -> Result<RawHtml<String>, PageError> {
@@ -122,6 +126,7 @@ pub async fn submit_clip_password(
         };
         match action::get_clip(req, database.get_pool()).await {
             Ok(clip) => {
+                views.view(short_code.clone(), 1);
                 let context = ctx::ViewClip::new(clip);
                 cookies.add(Cookie::new(
                     PASSWORD_COOKIE,
@@ -150,13 +155,14 @@ pub async fn submit_clip_password(
 #[rocket::get("/clip/raw/<short_code>")]
 pub async fn get_raw_clip(
     cookies: &CookieJar<'_>,
-    short_code: &str,
+    short_code: ShortCode,
+    views: &State<Views>,
     database: &State<AppDatabase>,
 ) -> Result<status::Custom<String>, Status> {
     use crate::domain::clip::field::Password;
 
     let req = ask::GetClip {
-        short_code: short_code.into(),
+        short_code: short_code.clone(),
         password: cookies
             .get(PASSWORD_COOKIE)
             .map(|cookie| cookie.value())
@@ -166,7 +172,10 @@ pub async fn get_raw_clip(
     };
 
     match action::get_clip(req, database.get_pool()).await {
-        Ok(clip) => Ok(status::Custom(Status::Ok, clip.content.into_inner())),
+        Ok(clip) => {
+            views.view(short_code.clone(), 1);
+            Ok(status::Custom(Status::Ok, clip.content.into_inner()))
+        }
         Err(e) => match e {
             ServiceError::PermissionError(msg) => Ok(status::Custom(Status::Unauthorized, msg)),
             ServiceError::NotFound => Err(Status::NotFound),

@@ -1,5 +1,6 @@
 use clipshare::data::AppDatabase;
 use clipshare::web::renderer::Renderer;
+use clipshare::web::views::Views;
 use dotenv::dotenv;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -21,13 +22,19 @@ fn main() {
     let rt = tokio::runtime::Runtime::new().expect("failed to spawn tokio runtime");
 
     let handle = rt.handle().clone();
+    let renderer = Renderer::new(opt.template_directory.clone());
+
+    let database = rt.block_on(async move { AppDatabase::new(&opt.connection_string).await });
+
+    let views = Views::new(database.get_pool().clone(), handle.clone());
+
+    let config = clipshare::RocketConfig {
+        renderer,
+        database,
+        views,
+    };
 
     rt.block_on(async move {
-        let renderer = Renderer::new(opt.template_directory);
-        let database = AppDatabase::new(&opt.connection_string).await;
-
-        let config = clipshare::RocketConfig { renderer, database };
-
         clipshare::rocket(config)
             .launch()
             .await
