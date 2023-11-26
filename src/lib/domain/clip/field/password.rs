@@ -13,7 +13,7 @@ impl Password {
 
         match password {
             Some(password) => {
-                if password.trim().is_empty() {
+                if !password.trim().is_empty() {
                     Ok(Self(Some(password)))
                 } else {
                     Ok(Self(None))
