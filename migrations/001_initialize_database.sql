@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS clip_share
+CREATE TABLE IF NOT EXISTS clips
 (
     id          TEXT PRIMARY KEY NOT NULL,
     short_code  TEXT UNIQUE NOT NULL,
