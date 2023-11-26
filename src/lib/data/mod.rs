@@ -13,7 +13,7 @@ pub enum DataError {
     Database(#[from] sqlx::Error),
 }
 
-pub type AddDatabase = Database<Sqlite>;
+pub type AppDatabase = Database<Sqlite>;
 pub type DatabasePool = sqlx::sqlite::SqlitePool;
 pub type Transaction<'t> = sqlx::Transaction<'t, Sqlite>;
 pub type AppDatabaseRow = sqlx::sqlite::SqliteRow;

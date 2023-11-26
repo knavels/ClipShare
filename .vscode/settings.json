@@ -3,6 +3,7 @@
         "DATABASE_URL": "sqlite:data.db"
     },
     "rust-analyzer.linkedProjects": [
+        ".\\Cargo.toml",
         ".\\Cargo.toml"
     ]
 }
