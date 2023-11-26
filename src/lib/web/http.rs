@@ -41,7 +41,7 @@ pub mod catcher {
         "404"
     }
 
-    pub fn catcher() -> Vec<Catcher> {
+    pub fn catchers() -> Vec<Catcher> {
         catchers![not_found, default, internal_error]
     }
 }
