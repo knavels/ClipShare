@@ -148,7 +148,8 @@ pub async fn get_clip(
             .get(PASSWORD_COOKIE)
             .map(|cookie| cookie.value())
             .map(|raw_password| Password::new(raw_password.to_string()).ok())
-            .unwrap_or_else(Password::default()),
+            .flatten()
+            .unwrap_or_else(Password::default),
     };
 
     let clip = action::get_clip(req, database.get_pool()).await?;
