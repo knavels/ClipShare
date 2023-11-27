@@ -213,3 +213,82 @@ pub mod catcher {
         catchers![not_found, default, internal_error]
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    use crate::data::AppDatabase;
+    use crate::test::async_runtime;
+    use crate::web::test::client;
+    use rocket::http::Status;
+
+    #[test]
+    fn gets_home() {
+        let client = client();
+        let response = client.get("/").dispatch();
+        assert_eq!(response.status(), Status::Ok);
+    }
+
+    #[test]
+    fn error_on_missing_clip() {
+        let client = client();
+        let response = client.get("/clip/asasdasdasdasd").dispatch();
+        assert_eq!(response.status(), Status::NotFound);
+    }
+
+    #[test]
+    fn requires_password_when_applicable() {
+        use crate::domain::clip::field::{Content, ExpiresAt, Password, Title};
+        use crate::service;
+        use rocket::http::{ContentType, Cookie};
+
+        let rt = async_runtime();
+
+        let client = client();
+        let db = client.rocket().state::<AppDatabase>().unwrap();
+
+        let req = service::ask::NewClip {
+            content: Content::new("content").unwrap(),
+            exprires_at: ExpiresAt::default(),
+            password: Password::new("123".to_owned()).unwrap(),
+            title: Title::default(),
+        };
+
+        let clip = rt
+            .block_on(async move { service::action::new_clip(req, db.get_pool()).await })
+            .unwrap();
+
+        // Block clip when no password is provided
+        let response = client
+            .get(format!("/clip/{}", clip.short_code.as_str()))
+            .dispatch();
+        assert_eq!(response.status(), Status::Unauthorized);
+
+        // Block clip when no password is provided
+        let response = client
+            .get(format!("/clip/raw/{}", clip.short_code.as_str()))
+            .dispatch();
+        assert_eq!(response.status(), Status::Unauthorized);
+
+        // Get clip when the password is provided
+        let response = client
+            .post(format!("/clip/{}", clip.short_code.as_str()))
+            .header(ContentType::Form)
+            .body("password=123")
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+
+        // Get clip when the password is provided
+        let response = client
+            .get(format!("/clip/raw/{}", clip.short_code.as_str()))
+            .cookie(Cookie::new("password", "123"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+
+        // Get clip when the password is provided, but incorrect
+        let response = client
+            .get(format!("/clip/raw/{}", clip.short_code.as_str()))
+            .cookie(Cookie::new("password", "abc"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Unauthorized);
+    }
+}

@@ -35,3 +35,34 @@ impl From<serde_json::Error> for PageError {
         PageError::Serialization(format!("{}", err))
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    use crate::test::async_runtime;
+    use crate::RocketConfig;
+    use rocket::local::blocking::Client;
+
+    pub fn config() -> RocketConfig {
+        use crate::web::{renderer::Renderer, views::Views};
+        let rt = async_runtime();
+        let renderer = Renderer::new("templates/".into());
+        let database = crate::data::test::new_db(rt.handle());
+        let maintenance = crate::domain::maintenance::Maintenance::spawn(
+            database.get_pool().clone(),
+            rt.handle().clone(),
+        );
+        let views = Views::new(database.get_pool().clone(), rt.handle().clone());
+
+        RocketConfig {
+            renderer,
+            database,
+            views,
+            maintenance,
+        }
+    }
+
+    pub fn client() -> Client {
+        let config = config();
+        Client::tracked(crate::rocket(config)).expect("failed to build rocket client")
+    }
+}

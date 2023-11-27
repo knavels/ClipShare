@@ -1,4 +1,5 @@
 use clipshare::data::AppDatabase;
+use clipshare::domain::maintenance::Maintenance;
 use clipshare::web::renderer::Renderer;
 use clipshare::web::views::Views;
 use dotenv::dotenv;
@@ -27,11 +28,13 @@ fn main() {
     let database = rt.block_on(async move { AppDatabase::new(&opt.connection_string).await });
 
     let views = Views::new(database.get_pool().clone(), handle.clone());
+    let maintenance = Maintenance::spawn(database.get_pool().clone(), handle.clone());
 
     let config = clipshare::RocketConfig {
         renderer,
         database,
         views,
+        maintenance,
     };
 
     rt.block_on(async move {
