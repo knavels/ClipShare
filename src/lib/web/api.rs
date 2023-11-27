@@ -163,6 +163,7 @@ pub async fn get_clip(
 pub async fn new_clip(
     req: Json<service::ask::NewClip>,
     database: &State<AppDatabase>,
+    _api_key: ApiKey,
 ) -> Result<Json<crate::Clip>, ApiError> {
     let clip = action::new_clip(req.into_inner(), database.get_pool()).await?;
     Ok(Json(clip))
@@ -172,6 +173,7 @@ pub async fn new_clip(
 pub async fn update_clip(
     req: Json<service::ask::UpdateClip>,
     database: &State<AppDatabase>,
+    _api_key: ApiKey,
 ) -> Result<Json<crate::Clip>, ApiError> {
     let clip = action::update_clip(req.into_inner(), database.get_pool()).await?;
     Ok(Json(clip))
