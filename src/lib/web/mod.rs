@@ -1,8 +1,11 @@
+pub mod api;
 pub mod ctx;
 pub mod form;
 pub mod http;
 pub mod renderer;
 pub mod views;
+
+pub use views::Views;
 
 pub const PASSWORD_COOKIE: &str = "password";
 
