@@ -10,7 +10,6 @@ use rocket::serde::json::Json;
 use rocket::Responder;
 use rocket::State;
 use serde::Serialize;
-use std::os::raw;
 use std::str::FromStr;
 
 pub const API_KEY_HEADER: &str = "x-api-key";

@@ -4,7 +4,6 @@ use clipshare::web::api::{ApiKey, API_KEY_HEADER};
 use clipshare::Clip;
 use std::error::Error;
 use structopt::StructOpt;
-use strum::EnumString;
 
 #[derive(StructOpt, Debug)]
 enum Command {

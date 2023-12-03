@@ -2,7 +2,7 @@ use crate::data::DatabasePool;
 use crate::service::{self, ServiceError};
 use crate::ShortCode;
 use crossbeam_channel::TryRecvError;
-use crossbeam_channel::{unbounded, Receiver, Sender};
+use crossbeam_channel::{unbounded, Sender};
 use parking_lot::Mutex;
 use std::collections::HashMap;
 use std::sync::Arc;
