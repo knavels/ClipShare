@@ -9,7 +9,10 @@ use structopt::StructOpt;
 #[derive(StructOpt, Debug)]
 #[structopt(name = "httpd")]
 struct Opt {
-    #[structopt(default_value = "sqlite:data.db")]
+    #[structopt(
+        default_value = "sqlite:data.db",
+        help = "connection string to sqlite database"
+    )]
     connection_string: String,
 
     #[structopt(short, long, parse(from_os_str), default_value = "templates/")]
