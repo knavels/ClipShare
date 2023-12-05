@@ -174,6 +174,6 @@ pub mod test {
         let clip = clip.unwrap();
 
         assert!(clip.short_code == "1");
-        assert!(clip.content == *"content for clip '1'");
+        assert!(clip.content == "content for clip '1'");
     }
 }
